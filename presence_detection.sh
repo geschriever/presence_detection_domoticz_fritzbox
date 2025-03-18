@@ -71,16 +71,16 @@ while [ $i -lt ${#device_names[@]} ]
 do
 
 	echo "checking device:${device_names[i]}"
-	
+
 	x=0
 	status_device=0
 
-	while [ $x -lt ${#fritzdevice_ips[@]} ] 	
+	while [ $x -lt ${#fritzdevice_ips[@]} ]
 	do
 	echo "checking fritz device:${fritzdevice_names[x]} on ${fritzdevice_ips[x]} "
-	status_domoticz_device=$(curl -s 'http://'$ip_domoticz'/json.htm?type=devices&rid='${device_idx[i]} | jq -r [.result][][].Data)   
+	status_domoticz_device=$(curl -s 'http://'$ip_domoticz'/json.htm?type=command&param=getdevices&rid='${device_idx[i]} | jq -r [.result][][].Data)
 	status_fritzbox_device=$(python $cwd/fritzhosts.py -i ${fritzdevice_ips[x]} -p $pass_fritzbox -d ${device_macs[i]})
-	
+
 	#remove all spaces from values fritzboxconnection 
 	status_fritzbox_device=$(echo $status_fritzbox_device | tr -d ' ')
 	sleep $delaytime; 
@@ -186,9 +186,9 @@ if [ "$run_install" = 1 ]; then
 	fi
 
 check_jq=$(dpkg-query -W -f='${Status} ${Version}\n' jq)
-check_python=$(dpkg-query -W -f='${Status} ${Version}\n' python)
-check_lxml=$(dpkg-query -W -f='${Status} ${Version}\n' python-lxml)
-check_requests=$(dpkg-query -W -f='${Status} ${Version}\n' python-requests)
+check_python=$(dpkg-query -W -f='${Status} ${Version}\n' python3)
+check_lxml=$(dpkg-query -W -f='${Status} ${Version}\n' python3-lxml)
+check_requests=$(dpkg-query -W -f='${Status} ${Version}\n' python3-requests)
 get_gateway=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
 
 if [[ $check_jq == *"installed"* ]]; then
