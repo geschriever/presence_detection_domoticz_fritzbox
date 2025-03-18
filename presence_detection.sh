@@ -71,16 +71,16 @@ while [ $i -lt ${#device_names[@]} ]
 do
 
 	echo "checking device:${device_names[i]}"
-	
+
 	x=0
 	status_device=0
 
-	while [ $x -lt ${#fritzdevice_ips[@]} ] 	
+	while [ $x -lt ${#fritzdevice_ips[@]} ]
 	do
 	echo "checking fritz device:${fritzdevice_names[x]} on ${fritzdevice_ips[x]} "
-	status_domoticz_device=$(curl -s 'http://'$ip_domoticz'/json.htm?type=devices&rid='${device_idx[i]} | jq -r [.result][][].Data)   
+	status_domoticz_device=$(curl -s 'http://'$ip_domoticz'/json.htm?type=command&param=getdevices&rid='${device_idx[i]} | jq -r [.result][][].Data)
 	status_fritzbox_device=$(python $cwd/fritzhosts.py -i ${fritzdevice_ips[x]} -p $pass_fritzbox -d ${device_macs[i]})
-	
+
 	#remove all spaces from values fritzboxconnection 
 	status_fritzbox_device=$(echo $status_fritzbox_device | tr -d ' ')
 	sleep $delaytime; 
@@ -186,9 +186,9 @@ if [ "$run_install" = 1 ]; then
 	fi
 
 check_jq=$(dpkg-query -W -f='${Status} ${Version}\n' jq)
-check_python=$(dpkg-query -W -f='${Status} ${Version}\n' python)
-check_lxml=$(dpkg-query -W -f='${Status} ${Version}\n' python-lxml)
-check_requests=$(dpkg-query -W -f='${Status} ${Version}\n' python-requests)
+check_python=$(dpkg-query -W -f='${Status} ${Version}\n' python3)
+check_lxml=$(dpkg-query -W -f='${Status} ${Version}\n' python3-lxml)
+check_requests=$(dpkg-query -W -f='${Status} ${Version}\n' python3-requests)
 get_gateway=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
 
 if [[ $check_jq == *"installed"* ]]; then
@@ -209,18 +209,18 @@ fi
 
 
 if [[ $check_lxml == *"installed"* ]]; then
-echo -e "Python-lxml :${GREEN}[OK]${NC}" 
+echo -e "Python3-lxml :${GREEN}[OK]${NC}" 
 
 else
-echo -e "Python-lxml:${RED}[not installed!]${NC}"
+echo -e "Python3-lxml:${RED}[not installed!]${NC}"
 check_dep=0
 fi
 
 if [[ $check_requests == *"installed"* ]]; then
-echo -e "Python-requests:${GREEN}[OK]${NC}" 
+echo -e "Python3-requests:${GREEN}[OK]${NC}" 
 
 else
-echo -e "Python-requests:${RED}[not installed!]${NC}"
+echo -e "Python3-requests:${RED}[not installed!]${NC}"
 check_dep=0
 fi
 
@@ -231,10 +231,10 @@ fi
 
         #install dependencies
         	if [[ $REPLY =~ ^[Yy]$ ]]; then
-                sudo apt-get install python jq python-lxml python-requests
+                sudo apt-get install python jq python3-lxml python3-requests
         	
 		else
-		echo "one or more dependencies are not installed, installation of this script cannot continue. Run: sudo apt-get install python jq python-lxml python-requests"
+		echo "one or more dependencies are not installed, installation of this script cannot continue. Run: sudo apt-get install python jq python3-lxml python3-requests"
         echo "and reinstall the script with: sudo bash  presence_detection.sh install"
 		exit 1
 		fi 
@@ -403,4 +403,3 @@ echo "Don't forget to disable wifi security on your devices on your home network
 echo "More Questions and answers can be found on: https://github.com/hydex80/presence_detection_domoticz_fritzbox"
 echo "Good luck, if you are happy or if you have any comments please goto the domoticz forum. or send (me) funky a PM"
 fi
-
